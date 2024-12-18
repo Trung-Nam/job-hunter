@@ -1,7 +1,10 @@
 package vn.trungnam.jobhunter.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vn.trungnam.jobhunter.entity.User;
+import vn.trungnam.jobhunter.exception.AppException;
+import vn.trungnam.jobhunter.exception.ErrorCode;
 import vn.trungnam.jobhunter.repository.UserRepository;
 
 import java.util.List;
@@ -11,9 +14,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User createUser(User reqUser){
@@ -21,13 +26,14 @@ public class UserService {
 
         user.setName(reqUser.getName());
         user.setEmail(reqUser.getEmail());
-        user.setPassword(reqUser.getPassword());
+        user.setPassword(passwordEncoder.encode(reqUser.getPassword()));
 
         return this.userRepository.save(user);
     }
 
     public User fetchUser(String id){
-        Optional<User> user = this.userRepository.findById(id);
+        Optional<User> user = Optional.ofNullable(this.userRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND)));
 
         if (user.isPresent()) {
             return user.get();
