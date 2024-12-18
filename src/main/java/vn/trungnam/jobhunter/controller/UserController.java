@@ -1,7 +1,10 @@
 package vn.trungnam.jobhunter.controller;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.trungnam.jobhunter.domain.User;
+import vn.trungnam.jobhunter.entity.User;
+import vn.trungnam.jobhunter.request.ApiResponse;
 import vn.trungnam.jobhunter.service.UserService;
 
 import java.util.List;
@@ -18,29 +21,55 @@ public class UserController {
 
 
     @PostMapping()
-    public User createUser(@RequestBody User reqUser){
-        return userService.createUser(reqUser);
+    public ApiResponse<User> createUser(@RequestBody User reqUser){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setResult(userService.createUser(reqUser));
+
+        return apiResponse;
     }
 
     @GetMapping("/{id}")
-    public User getUser(@PathVariable String id){
-        return userService.fetchUser(id);
+    public ApiResponse<User> getUser(@PathVariable String id){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setResult(userService.fetchUser(id));
+
+        return apiResponse;
     }
 
     @GetMapping()
-    public List<User> getAllUsers(){
-        return userService.fetchAllUsers();
+    public ApiResponse<List<User>> getAllUsers(){
+        ApiResponse<List<User>> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setResult(userService.fetchAllUsers());
+
+        return apiResponse;
     }
 
     @PutMapping()
-    public User updateUser(@RequestBody User user){
-        return userService.updateUser(user);
+    public ApiResponse<User> updateUser(@RequestBody User user){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setResult(userService.createUser(userService.updateUser(user)));
+
+        return apiResponse;
     }
 
 
     @DeleteMapping("/{id}")
-    public String deleteUser(@PathVariable("id") String id){
-        userService.deleteUser(id);
-        return "User has been deleted";
+    public ApiResponse<User> deleteUser(@PathVariable("id") String id){
+        ApiResponse<User> apiResponse = new ApiResponse<>();
+
+        apiResponse.setCode(HttpStatus.OK.value());
+        apiResponse.setMessage("User has been deleted!");
+        apiResponse.setResult(userService.deleteUser(id));
+
+        return apiResponse;
+
     }
 }
