@@ -1,7 +1,7 @@
 package vn.trungnam.jobhunter.service;
 
 import org.springframework.stereotype.Service;
-import vn.trungnam.jobhunter.domain.User;
+import vn.trungnam.jobhunter.entity.User;
 import vn.trungnam.jobhunter.repository.UserRepository;
 
 import java.util.List;
@@ -54,7 +54,8 @@ public class UserService {
         return null;
     }
 
-    public void deleteUser(String id) {
+    public User deleteUser(String id) {
         this.userRepository.deleteById(id);
+        return null;
     }
 }

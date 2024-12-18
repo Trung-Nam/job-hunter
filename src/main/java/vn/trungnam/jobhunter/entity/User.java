@@ -1,4 +1,4 @@
-package vn.trungnam.jobhunter.domain;
+package vn.trungnam.jobhunter.entity;
 
 import jakarta.persistence.*;
 
