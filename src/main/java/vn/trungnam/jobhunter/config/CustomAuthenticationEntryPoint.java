@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import vn.trungnam.jobhunter.domain.RestResponse;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint {
@@ -26,15 +27,21 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
 
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) throws IOException, ServletException {
         this.delegate.commence(request, response, authException);
         response.setContentType("application/json;charset=UTF-8");
 
         RestResponse<Object> res = new RestResponse<Object>();
         res.setStatusCode(HttpStatus.UNAUTHORIZED.value());
-        res.setError(authException.getCause().getMessage());
-        res.setMessage("Token is not valid!");
 
-        mapper.writeValue(response.getWriter(),res);
+        String errorMessage = Optional.ofNullable(authException.getCause()) // NULL
+                .map(Throwable::getMessage)
+                .orElse(authException.getMessage());
+        res.setError(errorMessage);
+
+        res.setMessage("Token is invalid! (Hết hạn, không đúng định dạng, hoặc không truyền JWT ở header)...");
+
+        mapper.writeValue(response.getWriter(), res);
     }
 }
